@@ -1,0 +1,33 @@
+<h1>RSVP Tester</h1>
+
+<!-- Add or Update RSVP -->
+<div>
+  <h3>Add/Update RSVP</h3>
+  <input type="text" placeholder="Player ID" #playerId />
+  <select #status>
+    <option value="Yes">Yes</option>
+    <option value="No">No</option>
+    <option value="Maybe">Maybe</option>
+  </select>
+  <button (click)="addOrUpdateRsvp(playerId.value, status.value)">Submit RSVP</button>
+</div>
+
+<!-- Fetch Confirmed Attendees -->
+<div>
+  <h3>Confirmed Attendees</h3>
+  <button (click)="fetchConfirmedAttendees()">Get Confirmed Attendees</button>
+  <ul>
+    @for (attendee of attendees; track attendee.id) {
+      <li>{{ attendee.name }}</li>
+    }
+  </ul>
+</div>
+
+<!-- Fetch Response Counts -->
+<div>
+  <h3>Response Counts</h3>
+  <button (click)="fetchResponseCounts()">Get Response Counts</button>
+  <p>Total Responses: {{ responseCounts.total }}</p>
+  <p>Confirmed Responses: {{ responseCounts.confirmed }}</p>
+  <p>Declined Responses: {{ responseCounts.declined }}</p>
+</div>
