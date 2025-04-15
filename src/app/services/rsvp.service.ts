@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, doc, setDoc, query, where, getDocs } from '@angular/fire/firestore';
+import { Firestore, collection, doc, setDoc, query, where, getDocs, getDoc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { RsvpEntry, RsvpStatus, Player } from '../models/rsvp.model';
 
@@ -41,12 +41,14 @@ export class RsvpService {
     return new Observable<Player[]>((observer) => {
       getDocs(confirmedRsvpsQuery).then((rsvpsSnapshot) => {
         const confirmedPlayerIds = rsvpsSnapshot.docs.map((doc) => doc.data()['playerId']);
-        const playersQuery = query(this.playersCollection);
-        getDocs(playersQuery).then((playersSnapshot) => {
-          const confirmedPlayers = playersSnapshot.docs
-            .map((doc) => doc.data() as Player)
-            .filter((player) => confirmedPlayerIds.includes(player.id));
-          observer.next(confirmedPlayers);
+  
+        const playerFetches = confirmedPlayerIds.map((id) => {
+          const playerDocRef = doc(this.playersCollection, id);
+          return getDoc(playerDocRef).then((docSnap) => docSnap.data() as Player);
+        });
+  
+        Promise.all(playerFetches).then((players) => {
+          observer.next(players);
         });
       });
     });
